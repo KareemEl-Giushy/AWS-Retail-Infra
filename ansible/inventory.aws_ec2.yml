@@ -1,0 +1,16 @@
+---
+plugin: amazon.aws.aws_ec2
+profile: kareem-aziz
+regions:
+  - us-east-1
+
+filters:
+  instance-state-name: running
+  tag:Env:
+    - k8s
+
+hostnames:
+  - instance-id
+
+keyed_groups:
+  - key: tags.Env

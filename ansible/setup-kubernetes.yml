@@ -1,0 +1,6 @@
+---
+- name: Setup Kubernetes Cluster on Ec2
+  hosts: Env_k8s
+  vars_files:
+    - varfile.yml
+  tasks:
