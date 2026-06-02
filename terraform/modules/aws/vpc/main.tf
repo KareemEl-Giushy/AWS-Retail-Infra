@@ -31,7 +31,7 @@ resource "aws_nat_gateway" "nat" {
     Name = "NATgw"
   }
 
-  depends_on = [aws_internet_gateway.gw]
+  depends_on = [aws_internet_gateway.gw, aws_eip.lb]
 }
 
 resource "aws_subnet" "private_subnet" {
