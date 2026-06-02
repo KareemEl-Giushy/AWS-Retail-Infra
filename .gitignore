@@ -1,4 +1,3 @@
 *.lock.hcl
 .terraform/
 keys/
-ansible/ssh.config
