@@ -27,3 +27,4 @@ host i-* mi-*
     UserKnownHostsFile /dev/null
 ```
 
+[Create a Custom Image With Packer on AWS](https://dev.to/aws-builders/creating-a-custom-amazon-machine-image-ami-with-hashicorp-packer-on-aws-2ig2)
