@@ -14,3 +14,10 @@ hostnames:
 
 keyed_groups:
   - key: tags.Env
+
+compose:
+  # Links your custom ssh.config file to every discovered host
+  ansible_ssh_common_args: "'-F ./ssh.config'"
+
+  # Sets the default connection user (e.g., ec2-user, ubuntu, admin)
+  ansible_user: "'ubuntu'"
