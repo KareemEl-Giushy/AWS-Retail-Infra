@@ -1,5 +1,5 @@
 *.lock.hcl
 .terraform/
-keys/
+keys/*
 k8s_join_command.txt
 k8s.config
