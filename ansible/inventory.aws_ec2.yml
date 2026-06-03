@@ -14,6 +14,7 @@ hostnames:
 
 keyed_groups:
   - key: tags.Env
+  - key: tags.type
 
 compose:
   # Links your custom ssh.config file to every discovered host

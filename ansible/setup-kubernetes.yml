@@ -1,6 +1,7 @@
 ---
-- name: Setup Kubernetes Cluster on Ec2
-  hosts: Env_k8s
-  vars_files:
-    - varfile.yml
-  tasks:
+- name: Setup Master Node
+  import_playbook: "./playbooks/setup-k8s-master.yml"
+
+
+- name: Setup Master Node
+  import_playbook: "./playbooks/setup-k8s-worker.yml"
