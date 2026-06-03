@@ -3,5 +3,5 @@
   import_playbook: "./playbooks/setup-k8s-master.yml"
 
 
-- name: Setup Master Node
+- name: Setup Worker Node
   import_playbook: "./playbooks/setup-k8s-worker.yml"
