@@ -15,3 +15,9 @@ variable "public_subnet_cidr" {
   type        = string
   default     = "10.0.0.0/28"
 }
+
+variable "az" {
+  description = "Specify Availablity Zone"
+  type        = string
+  default     = "us-east-1a"
+}

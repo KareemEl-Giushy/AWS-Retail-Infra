@@ -1,7 +1,3 @@
-locals {
-  ubuntu_image = "ami-091138d0f0d41ff90"
-}
-
 data "aws_subnet" "selected" {
   id = var.ec2_subnet_id
 }
@@ -18,8 +14,9 @@ resource "aws_security_group" "ec2_sg" {
 }
 
 resource "aws_instance" "master_node" {
-  ami           = local.ubuntu_image
-  instance_type = "t3.small"
+  ami               = var.ec2_master_node_ami
+  instance_type     = "t3.small"
+  availability_zone = var.az
 
   key_name  = aws_key_pair.deployer.key_name
   subnet_id = var.ec2_subnet_id
@@ -37,12 +34,14 @@ resource "aws_instance" "master_node" {
   tags = {
     Name = "Master-Node"
     Env  = "k8s"
+    type = "master"
   }
 }
 
 resource "aws_instance" "worker_node" {
-  ami           = local.ubuntu_image
-  instance_type = "t3.micro"
+  ami               = var.ec2_worker_node_ami
+  instance_type     = "t3.micro"
+  availability_zone = var.az
 
   key_name  = aws_key_pair.deployer.key_name
   subnet_id = var.ec2_subnet_id
@@ -60,5 +59,6 @@ resource "aws_instance" "worker_node" {
   tags = {
     Name = "Worker-Node"
     Env  = "k8s"
+    type = "worker"
   }
 }
