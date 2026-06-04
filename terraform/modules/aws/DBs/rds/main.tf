@@ -1,12 +1,13 @@
 resource "aws_db_subnet_group" "orders" {
   name       = "${var.project_name}-orders-subnet-group"
-  subnet_ids = tolist(var.private_subnet_ids)   # ← Fixed: was private_subnet_id (singular)
-
+  subnet_ids = [var.private_subnet_ids]   # ← Updated: replaced tolist() with []
+  
   tags = {
     Project   = var.project_name
     ManagedBy = "Terraform"
   }
-}                                               # ← Fixed: removed duplicate tags block
+}
+                                             
 
 resource "aws_security_group" "rds" {
   name        = "${var.project_name}-rds-sg"
