@@ -18,7 +18,7 @@
 
 
 this in `~/.ssh/config` file
-```
+```bash
 host i-* mi-*
     # User Ubuntu
     IdentityFile ~/.ssh/your-ec2-key.pem
@@ -28,3 +28,10 @@ host i-* mi-*
 ```
 
 [Create a Custom Image With Packer on AWS](https://dev.to/aws-builders/creating-a-custom-amazon-machine-image-ami-with-hashicorp-packer-on-aws-2ig2)
+
+
+
+Ec2->ssm->ssh->localhost
+```bash
+ssh -N -L 6443:127.0.0.1:6443 ubuntu@<INSTANCE_ID>
+```
