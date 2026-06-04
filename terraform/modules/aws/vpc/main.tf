@@ -84,3 +84,30 @@ resource "aws_vpc_endpoint" "s3" {
   ip_address_type   = "ipv4"
 
 }
+
+resource "aws_vpc_endpoint" "ssm" {
+  vpc_id              = aws_vpc.main.id
+  subnet_ids          = [aws_subnet.private_subnet.id]
+  service_name        = "com.amazonaws.us-east-1.ssm"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  ip_address_type     = "ipv4"
+}
+
+resource "aws_vpc_endpoint" "ssmmessages" {
+  vpc_id              = aws_vpc.main.id
+  subnet_ids          = [aws_subnet.private_subnet.id]
+  service_name        = "com.amazonaws.us-east-1.ssmmessages"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  ip_address_type     = "ipv4"
+}
+
+resource "aws_vpc_endpoint" "ec2messages" {
+  vpc_id              = aws_vpc.main.id
+  subnet_ids          = [aws_subnet.private_subnet.id]
+  service_name        = "com.amazonaws.us-east-1.ec2messages"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  ip_address_type     = "ipv4"
+}
