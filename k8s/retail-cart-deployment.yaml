@@ -1,0 +1,90 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: carts
+data:
+  RETAIL_CART_PERSISTENCE_PROVIDER: dynamodb
+  RETAIL_CART_PERSISTENCE_DYNAMODB_TABLE_NAME: Items
+  RETAIL_CART_PERSISTENCE_DYNAMODB_CREATE_TABLE: "true"
+  RETAIL_CART_PERSISTENCE_DYNAMODB_ENDPOINT: http://carts-dynamodb:8000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: retail-cart
+  namespace: default
+  labels:
+    app: retail-cart
+spec:
+  selector:
+    matchLabels:
+      app: retail-cart
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: retail-cart
+    spec:
+      volumes:
+        - name: tmp-volume
+          emptyDir:
+            medium: Memory
+      containers:
+        - name: retail-cart
+          image: "public.ecr.aws/aws-containers/retail-store-sample-cart:1.6.1"
+          imagePullPolicy: IfNotPresent
+          restartPolicy: Always
+          ports:
+            - containerPort: 8080
+              name: retail-cart
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 10
+          resources:
+            limits:
+              memory: 512Mi
+            requests:
+              cpu: 256m
+              memory: 512Mi
+          volumeMounts:
+            - mountPath: /tmp
+              name: tmp-volume
+          env:
+            - name: JAVA_OPTS
+              value: -XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/urandom
+          envFrom:
+            - configMapRef:
+              name: carts
+            - secretRef:
+              name: aws-cred
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: retail-cart-service
+  namespace: default
+spec:
+  type: NodePort
+  selector:
+    app: retail-cart
+  ports:
+    - name: retail-cart-service
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30020

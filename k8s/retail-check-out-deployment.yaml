@@ -1,0 +1,84 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: checkout
+data:
+  RETAIL_CHECKOUT_PERSISTENCE_PROVIDER: redis
+  RETAIL_CHECKOUT_PERSISTENCE_REDIS_URL: redis://checkout-redis:6379
+  RETAIL_CHECKOUT_ENDPOINTS_ORDERS: http://orders:80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: retail-checkout
+  namespace: default
+  labels:
+    app: retail-checkout
+spec:
+  selector:
+    matchLabels:
+      app: retail-checkout
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: retail-checkout
+    spec:
+      containers:
+        - name: retail-checkout
+          image: "public.ecr.aws/aws-containers/retail-store-sample-checkout:1.6.1"
+          imagePullPolicy: IfNotPresent
+          restartPolicy: Always
+          resources:
+            requests:
+              cpu: 128m
+              memory: 256mi
+            limits:
+              memory: 256mi
+          ports:
+            - containerPort: 8080
+              name: retail-checkout
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+          envFrom:
+            - configMapKeyRef:
+                name: checkout
+          securityContext:
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+          volumeMounts:
+            - name: temp-volume
+              mountPath: /tmp
+      volumes:
+        - name: temp-volume
+          emptyDir:
+            medium: Memory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: retail-checkout-service
+  namespace: default
+spec:
+  type: NodePort
+  selector:
+    app: retail-checkout
+  ports:
+    - name: retail-checkout-service
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30030
