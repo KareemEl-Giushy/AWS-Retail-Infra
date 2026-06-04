@@ -13,14 +13,16 @@ variable "db_password" {
   sensitive   = true
 }
 
-variable "private_subnet_id" {              # ← Fixed: was singular private_subnet_id
-  description = "List of private subnet IDs"
-  type        = string                
+variable "private_subnet_id" {
+  description = "Private subnet ID for RDS (must be in a private AZ)"
+  type        = string
+
   validation {
-    condition     = length(var.private_subnet_ids) >= 2
-    error_message = "RDS requires at least 2 subnets in different AZs."
+    condition     = length(var.private_subnet_id) > 0
+    error_message = "You must provide a valid private subnet ID."
   }
 }
+
 
 variable "vpc_id" {
   description = "VPC ID where RDS lives"
