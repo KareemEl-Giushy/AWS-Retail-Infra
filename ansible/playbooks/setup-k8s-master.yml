@@ -10,7 +10,7 @@
       become: true
     
     - name: Initialize Kubeadm again
-      ansible.builtin.shell: kubeadm init --apiserver-advertise-address={{ masterIP }} --pod-network-cidr={{ podCIDR }}
+      ansible.builtin.shell: kubeadm init --apiserver-advertise-address=$(hostname) --pod-network-cidr={{ podCIDR }}
       become: true
 
     - name: Delete .kube Directory
