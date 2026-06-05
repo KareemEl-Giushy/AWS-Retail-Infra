@@ -54,3 +54,7 @@ module "aws_instance_config" {
   }
   depends_on = [module.aws_vpc_config]
 }
+
+module "aws_dynamodb_config" {
+  source = "../../../modules/aws/DBs/dynamodb"
+}
