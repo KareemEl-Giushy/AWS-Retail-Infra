@@ -1,5 +1,5 @@
 variable "project_name" {
   description = "Name prefix for all resources"
   type        = string
-  default     = "retail-cart"
+  default     = "AWS-retail"
 }
