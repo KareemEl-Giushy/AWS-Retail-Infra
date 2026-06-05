@@ -85,6 +85,13 @@ resource "aws_vpc_endpoint" "s3" {
 
 }
 
+resource "aws_vpc_endpoint" "dynamodb" {
+  vpc_id            = aws_vpc.main.id
+  service_name      = "com.amazonaws.us-east-1.dynamodb"
+  vpc_endpoint_type = "Gateway"
+  ip_address_type   = "ipv4"
+}
+
 resource "aws_vpc_endpoint" "ssm" {
   vpc_id              = aws_vpc.main.id
   subnet_ids          = [aws_subnet.private_subnet.id]
