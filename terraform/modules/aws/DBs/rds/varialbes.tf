@@ -1,10 +1,7 @@
 variable "project_name" {
   description = "Name prefix for all resources"
   type        = string
-
-  description = "dev or prod"
-  type        = string
-  default     = "dev"
+  default     = "aws-retail"
 }
 
 variable "db_password" {
@@ -23,6 +20,10 @@ variable "private_subnet_id" {
   }
 }
 
+variable "az" {
+  description = "Another az for the subnet"
+  type        = string
+}
 
 variable "vpc_id" {
   description = "VPC ID where RDS lives"

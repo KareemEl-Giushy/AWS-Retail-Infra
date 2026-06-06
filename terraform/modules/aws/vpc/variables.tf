@@ -18,6 +18,6 @@ variable "public_subnet_cidr" {
 
 variable "az" {
   description = "Specify Availablity Zone"
-  type        = string
-  default     = "us-east-1a"
+  type        = list(string)
+  default     = ["us-east-1a"]
 }
