@@ -55,9 +55,10 @@ module "aws_instance_config" {
   depends_on = [module.aws_vpc_config]
 }
 
-module "aws_dynamodb_config" {
-  source = "../../../modules/aws/DBs/dynamodb"
-}
+# Don't need it as it will be created by the micro-service
+# module "aws_dynamodb_config" {
+#   source = "../../../modules/aws/DBs/dynamodb"
+# }
 
 module "aws_sqs_config" {
   source = "../../../modules/aws/sqs"
