@@ -23,11 +23,12 @@ fullnameOverride: ""
 env:
   - name: JAVA_OPTS
     value: -XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/urandom
+
 envFrom:
   - configMapRef:
-    name: carts
+      name: carts
   - secretRef:
-    name: aws-cred
+      name: aws-cred
 
 # This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
 serviceAccount:
@@ -121,12 +122,12 @@ httpRoute:
   #     - name: version
   #       value: v2
 
-resources:
-  limits:
-    memory: 512Mi
-  requests:
-    cpu: 256m
-    memory: 512Mi
+# resources:
+#   limits:
+#     memory: 512Mi
+#   requests:
+#     cpu: 256m
+#     memory: 512Mi
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following

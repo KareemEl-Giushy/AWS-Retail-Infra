@@ -25,13 +25,10 @@ env:
     value: -XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/urandom
 
 envFrom:
-  - configMapKeyRef:
+  - configMapRef:
       name: orders
   - secretRef:
       name: rds-cred
-  - secretRef:
-      name: rabbitmq-config
-
 # This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
 serviceAccount:
   # Specifies whether a service account should be created.
