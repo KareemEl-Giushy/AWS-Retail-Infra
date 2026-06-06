@@ -1,24 +1,34 @@
+data "aws_vpc" "main" {
+  id = var.vpc_id
+}
+
+resource "aws_subnet" "dummy_placeholder" {
+  vpc_id            = data.aws_vpc.main.id
+  cidr_block        = "10.0.0.144/28"
+  availability_zone = var.az
+  tags              = { Name = "RDS-Dummy-Subnet" }
+}
+
 resource "aws_db_subnet_group" "orders" {
   name       = "${var.project_name}-orders-subnet-group"
-  subnet_ids = [var.private_subnet_ids]   # ← Updated: replaced tolist() with []
-  
+  subnet_ids = [var.private_subnet_id, aws_subnet.dummy_placeholder.id]
+
   tags = {
-    Project   = var.project_name
-    ManagedBy = "Terraform"
+    app = "aws-retail"
   }
 }
-                                             
+
 
 resource "aws_security_group" "rds" {
   name        = "${var.project_name}-rds-sg"
   description = "Allow PostgreSQL from inside VPC only"
-  vpc_id      = var.vpc_id
+  vpc_id      = data.aws_vpc.main.id
 
   ingress {
     from_port   = 5432
     to_port     = 5432
     protocol    = "tcp"
-    cidr_blocks = ["10.0.0.0/16"]
+    cidr_blocks = [data.aws_vpc.main.cidr_block]
   }
 
   egress {
@@ -29,34 +39,32 @@ resource "aws_security_group" "rds" {
   }
 
   tags = {
-    Project   = var.project_name
-    ManagedBy = "Terraform"
+    app = "aws-retail"
   }
 }
 
 resource "aws_db_instance" "orders" {
   identifier        = "${var.project_name}-orders-db"
   engine            = "postgres"
-  engine_version    = "15.4"
+  engine_version    = "16.6"
   instance_class    = "db.t3.micro"
-  allocated_storage = 20
+  availability_zone = "us-east-1a"
+  allocated_storage = 5
+  multi_az          = false
 
-  db_name  = var.db_name       # ← Fixed: indentation was inconsistent
+  db_name  = var.db_name
   username = var.db_username
   password = var.db_password
 
   db_subnet_group_name   = aws_db_subnet_group.orders.name
-  vpc_security_group_ids = [aws_security_group.rds.id]  # ← Fixed: was var.db_security_group_ids (removed)
+  vpc_security_group_ids = [aws_security_group.rds.id]
   publicly_accessible    = false
 
-  backup_retention_period = 7
-  skip_final_snapshot     = true
-  deletion_protection     = false
+  skip_final_snapshot = true
+  deletion_protection = false
 
   tags = {
-    Project     = var.project_name
-    Service     = "orders"
-    Environment = var.environment
-    ManagedBy   = "Terraform"
+    Service = "orders"
+    app     = "aws-retail"
   }
 }

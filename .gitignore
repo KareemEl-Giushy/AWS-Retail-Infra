@@ -1,5 +1,8 @@
 *.lock.hcl
 .terraform/
+*.tfvars
 keys/*
 k8s_join_command.txt
 k8s.config
+k8s/secrets/*.yaml
+secret.yaml

@@ -11,7 +11,7 @@ resource "aws_internet_gateway" "gw" {
 resource "aws_subnet" "public_subnet" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = var.public_subnet_cidr
-  availability_zone = var.az
+  availability_zone = var.az[0]
 
   tags = {
     Name = "Public Subnet"
@@ -39,7 +39,7 @@ resource "aws_subnet" "private_subnet" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = var.private_subnet_cidr
   map_public_ip_on_launch = false
-  availability_zone       = var.az
+  availability_zone       = var.az[0]
 
   tags = {
     Name = "Private Subnet"
@@ -114,6 +114,24 @@ resource "aws_vpc_endpoint" "ec2messages" {
   vpc_id              = aws_vpc.main.id
   subnet_ids          = [aws_subnet.private_subnet.id]
   service_name        = "com.amazonaws.us-east-1.ec2messages"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  ip_address_type     = "ipv4"
+}
+
+resource "aws_vpc_endpoint" "sqs" {
+  vpc_id              = aws_vpc.main.id
+  subnet_ids          = [aws_subnet.private_subnet.id]
+  service_name        = "com.amazonaws.us-east-1.sqs"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  ip_address_type     = "ipv4"
+}
+
+resource "aws_vpc_endpoint" "rds" {
+  vpc_id              = aws_vpc.main.id
+  subnet_ids          = [aws_subnet.private_subnet.id]
+  service_name        = "com.amazonaws.us-east-1.rds"
   vpc_endpoint_type   = "Interface"
   private_dns_enabled = true
   ip_address_type     = "ipv4"
