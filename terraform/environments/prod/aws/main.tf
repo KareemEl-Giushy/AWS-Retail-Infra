@@ -34,7 +34,7 @@ data "aws_availability_zones" "available" {
 
 module "aws_vpc_config" {
   source = "../../../modules/aws/vpc"
-  az     = data.aws_availability_zones.available.names[0]
+  az     = data.aws_availability_zones.available.names
   providers = {
     aws = aws
   }
@@ -57,4 +57,19 @@ module "aws_instance_config" {
 
 module "aws_dynamodb_config" {
   source = "../../../modules/aws/DBs/dynamodb"
+}
+
+module "aws_sqs_config" {
+  source = "../../../modules/aws/sqs"
+  vpc_id = module.aws_vpc_config.vpc_id
+}
+
+module "aws_rds_postgress_config" {
+  source            = "../../../modules/aws/DBs/rds"
+  vpc_id            = module.aws_vpc_config.vpc_id
+  private_subnet_id = module.aws_vpc_config.private_subnet_id
+  db_name           = var.postgress_db_name
+  db_username       = var.postgres_username
+  db_password       = var.postgres_password
+  az                = data.aws_availability_zones.available.names[1]
 }
