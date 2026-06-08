@@ -1,0 +1,6 @@
+dependencies:
+- name: retail-order
+  repository: file://../retail-order
+  version: 0.1.0
+digest: sha256:d85a10420c1b888a11aabef30bbd5fd583d5a63c5fc6386edde400b0e4c9add7
+generated: "2026-06-08T17:02:13.519629673+03:00"
