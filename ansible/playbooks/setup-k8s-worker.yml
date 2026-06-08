@@ -18,22 +18,5 @@
       register: join_result
       become: true
 
-    - name: Delete .kube Directory
-      ansible.builtin.command:
-        cmd: rm -rf ~/.kube
-
-    - name: Make New .kube Directory
-      ansible.builtin.command:
-        cmd: mkdir -p $HOME/.kube
-
-    - name: Upload .kube config File
-      ansible.builtin.copy:
-        src: ./k8s.config
-        dest: $HOME/.kube/config
-
-    - name: Change Node Label
-      ansible.builtin.shell: kubectl label node $(hostname) node-role.kubernetes.io/worker=
-
-    - name: Apply Networking CNI Plugin
-      ansible.builtin.shell: kubectl apply -f https://github.com/flannel-io/flannel/releases/latest/download/kube-flannel.yml
-      ignore_errors: true
+    # - name: Change Node Label
+    #   ansible.builtin.shell: kubectl label node $(hostname) node-role.kubernetes.io/worker=
