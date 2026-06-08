@@ -62,3 +62,28 @@ resource "aws_instance" "worker_node" {
     type = "worker"
   }
 }
+
+resource "aws_instance" "worker_node_2" {
+  ami               = var.ec2_worker_node_ami
+  instance_type     = "t3.micro"
+  availability_zone = var.az
+
+  key_name  = aws_key_pair.deployer.key_name
+  subnet_id = var.ec2_subnet_id
+
+  user_data = var.ec2_init_script
+
+  iam_instance_profile = aws_iam_instance_profile.ec2_profile.name
+
+  root_block_device {
+    delete_on_termination = true
+    volume_size           = 20
+    volume_type           = "gp3"
+  }
+
+  tags = {
+    Name = "Worker-Node"
+    Env  = "k8s"
+    type = "worker"
+  }
+}
