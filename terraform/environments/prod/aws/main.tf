@@ -1,40 +1,20 @@
-data "aws_s3_bucket" "terraform-backend" {
-  bucket = "terraform-state-294936105594-us-east-1-an"
-}
-
-data "aws_ami" "master_node_ami" {
-  owners      = ["self"]
-  most_recent = true
-  filter {
-    name   = "name"
-    values = ["*-kubeadm-master"]
-  }
-  filter {
-    name   = "root-device-type"
-    values = ["ebs"]
-  }
-}
-
-data "aws_ami" "worker_node_ami" {
-  owners      = ["self"]
-  most_recent = true
-  filter {
-    name   = "name"
-    values = ["*-kubeadm-worker"]
-  }
-  filter {
-    name   = "root-device-type"
-    values = ["ebs"]
-  }
-}
-
-data "aws_availability_zones" "available" {
-  state = "available"
+locals {
+  app_secrets = templatefile("${path.module}/secret.tftpl", {
+    ACCESS_KEY_ID     = ephemeral.aws_ssm_parameter.access_key_id.value
+    SECRET_ACCESS_KEY = ephemeral.aws_ssm_parameter.access_key_secret.value
+  })
 }
 
 module "aws_vpc_config" {
   source = "../../../modules/aws/vpc"
   az     = data.aws_availability_zones.available.names
+  vpc_endpoint = {
+    "ssm"         = "com.amazonaws.us-east-1.ssm"
+    "ssmmessages" = "com.amazonaws.us-east-1.ssmmessages"
+    "ec2messages" = "com.amazonaws.us-east-1.ec2messages"
+    "sqs"         = "com.amazonaws.us-east-1.sqs"
+    "rds"         = "com.amazonaws.us-east-1.rds"
+  }
   providers = {
     aws = aws
   }
@@ -69,8 +49,20 @@ module "aws_rds_postgress_config" {
   source            = "../../../modules/aws/DBs/rds"
   vpc_id            = module.aws_vpc_config.vpc_id
   private_subnet_id = module.aws_vpc_config.private_subnet_id
-  db_name           = var.postgress_db_name
-  db_username       = var.postgres_username
-  db_password       = var.postgres_password
-  az                = data.aws_availability_zones.available.names[1]
+
+  db_name     = data.aws_ssm_parameter.dbname.value
+  db_username = data.aws_ssm_parameter.dbusername.value
+  db_password = ephemeral.aws_ssm_parameter.rds_db_password.value
+
+  az = data.aws_availability_zones.available.names[1]
+}
+
+resource "null_resource" "save_config" {
+  triggers = {
+    run_id = uuid()
+  }
+
+  provisioner "local-exec" {
+    command = "echo '${local.app_secrets}' > ../../../../k8s/secret.yaml"
+  }
 }

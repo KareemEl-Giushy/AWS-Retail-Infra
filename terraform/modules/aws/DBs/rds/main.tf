@@ -52,9 +52,10 @@ resource "aws_db_instance" "orders" {
   allocated_storage = 5
   multi_az          = false
 
-  db_name  = var.db_name
-  username = var.db_username
-  password = var.db_password
+  db_name             = var.db_name
+  username            = var.db_username
+  password_wo         = var.db_password
+  password_wo_version = 1
 
   db_subnet_group_name   = aws_db_subnet_group.orders.name
   vpc_security_group_ids = [aws_security_group.rds.id]
