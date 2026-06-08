@@ -8,6 +8,13 @@ locals {
 module "aws_vpc_config" {
   source = "../../../modules/aws/vpc"
   az     = data.aws_availability_zones.available.names
+  vpc_endpoint = {
+    "ssm"         = "com.amazonaws.us-east-1.ssm"
+    "ssmmessages" = "com.amazonaws.us-east-1.ssmmessages"
+    "ec2messages" = "com.amazonaws.us-east-1.ec2messages"
+    "sqs"         = "com.amazonaws.us-east-1.sqs"
+    "rds"         = "com.amazonaws.us-east-1.rds"
+  }
   providers = {
     aws = aws
   }
