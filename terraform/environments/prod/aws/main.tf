@@ -8,6 +8,13 @@ locals {
 module "aws_vpc_config" {
   source = "../../../modules/aws/vpc"
   az     = data.aws_availability_zones.available.names
+  vpc_endpoint = {
+    "ssm"         = "com.amazonaws.us-east-1.ssm"
+    "ssmmessages" = "com.amazonaws.us-east-1.ssmmessages"
+    "ec2messages" = "com.amazonaws.us-east-1.ec2messages"
+    "sqs"         = "com.amazonaws.us-east-1.sqs"
+    "rds"         = "com.amazonaws.us-east-1.rds"
+  }
   providers = {
     aws = aws
   }
@@ -28,9 +35,10 @@ module "aws_instance_config" {
   depends_on = [module.aws_vpc_config]
 }
 
-module "aws_dynamodb_config" {
-  source = "../../../modules/aws/DBs/dynamodb"
-}
+# Don't need it as it will be created by the micro-service
+# module "aws_dynamodb_config" {
+#   source = "../../../modules/aws/DBs/dynamodb"
+# }
 
 module "aws_sqs_config" {
   source = "../../../modules/aws/sqs"
