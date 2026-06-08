@@ -18,5 +18,5 @@
       register: join_result
       become: true
 
-    - name: Change Node Label
-      ansible.builtin.shell: kubectl label node $(hostname) node-role.kubernetes.io/worker=
+    # - name: Change Node Label
+    #   ansible.builtin.shell: kubectl label node $(hostname) node-role.kubernetes.io/worker=
